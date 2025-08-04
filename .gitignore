@@ -1,0 +1,8 @@
+#venv
+.venv/
+
+#binaries
+*.a
+*.o
+*.pyc
+*.pyo
