@@ -4,5 +4,6 @@
 #binaries
 *.a
 *.o
+*.out
 *.pyc
 *.pyo
