@@ -23,7 +23,7 @@
 #include "point.h"
 #include <cmath>
 
-void cube(int D, int N, int K, struct point *p, int *maxIndex);
-int cubealgorithm(int D, int N, int K, struct point *p, int L, int t, struct point *c, struct point *answer);
+void cube(size_t D, size_t N, int K, struct point *p, int *maxIndex);
+int cubealgorithm(size_t D, size_t N, int K, struct point *p, int L, int t, struct point *c, struct point *answer);
 
 #endif

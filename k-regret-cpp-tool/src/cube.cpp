@@ -22,9 +22,9 @@
 #include <cmath>
 #include <kregret/cube.h>
 
-int cubealgorithm(int D, int N, int K, struct point *p, int L, int t, struct point *c, struct point *answer)
+int cubealgorithm(size_t D, size_t N, int K, struct point *p, size_t L, int t, struct point *c, struct point *answer)
 {
-	int i, j, index, inCube, distinct, cubeBestIndex, done, seenBefore;
+	int i, j, index, inCube, cubeBestIndex, done, seenBefore;
 	
 	std::vector<int>boundary(D,0);
 
@@ -95,9 +95,10 @@ int cubealgorithm(int D, int N, int K, struct point *p, int L, int t, struct poi
 	return index;
 }
 
-void cube(int D, int N, int K, struct point *p, int *maxIndex)
+void cube(size_t D, size_t N, int K, struct point *p, int *maxIndex)
 {
-	int i, j, t, index, L = D - 1, inCube, distinct;
+	int i, j, t, distinct;
+	size_t L = D - 1;
 	std::vector<point> c(D); // maximal points in each direction
 	std::vector<point> answer(K + 1);
 

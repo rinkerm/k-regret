@@ -26,7 +26,7 @@
 
 struct point
 {
-    int d;
+    size_t d;
     double* a;
 };
 
