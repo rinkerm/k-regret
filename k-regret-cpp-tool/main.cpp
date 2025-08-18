@@ -28,8 +28,8 @@
 #include <cstring>
 #include <iomanip>
 
-#include "include/cube.h"
-#include "include/point.h"
+#include <kregret/cube.h>
+#include <kregret/point.h>
 
 void printHelp(const char* programName) {
     std::cout << "\nNAME\n";

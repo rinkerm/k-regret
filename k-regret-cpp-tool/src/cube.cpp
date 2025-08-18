@@ -18,12 +18,15 @@
 //==========================================================================================
 
 // Algorithm using the cube "strips" method
-#include "../include/cube.h"
+#include <vector>
+#include <cmath>
+#include <kregret/cube.h>
 
 int cubealgorithm(int D, int N, int K, struct point *p, int L, int t, struct point *c, struct point *answer)
 {
 	int i, j, index, inCube, distinct, cubeBestIndex, done, seenBefore;
-	int boundary[D];
+	
+	std::vector<int>boundary(D,0);
 
 	index = 0;
 	// first list the maximal points in the directions {1,...,D}\L
@@ -32,11 +35,6 @@ int cubealgorithm(int D, int N, int K, struct point *p, int L, int t, struct poi
 			answer[index++] = c[i];
 
 	/*** Try all 0 <= j_1, j_2, \ldots < t ***/
-
-	// initialize to all zeros
-	for(i = 0; i < D; ++i)
-		boundary[i] = 0;
-
 	done = 0;
 	while(!done && index < K)
 	{
@@ -100,8 +98,8 @@ int cubealgorithm(int D, int N, int K, struct point *p, int L, int t, struct poi
 void cube(int D, int N, int K, struct point *p, int *maxIndex)
 {
 	int i, j, t, index, L = D - 1, inCube, distinct;
-	struct point c[D]; // maximal points in each direction
-	struct point answer[K + 1];
+	std::vector<point> c(D); // maximal points in each direction
+	std::vector<point> answer(K + 1);
 
 	// compute the maximal points in each of the D directions
 	for(i = 0; i < D; ++i)
@@ -117,13 +115,13 @@ void cube(int D, int N, int K, struct point *p, int *maxIndex)
 	// keep looping until we find at least K distinct points
 	do
 	{
-		distinct = cubealgorithm(D, N, K, p, L, t, c, answer);
+		distinct = cubealgorithm(D, N, K, p, L, t, c.data(), answer.data());
 		t++;
 	}
 	while(distinct < K && distinct < N);
 
 	if (distinct > K)
-		cubealgorithm(D, N, K, p, L, t - 2, c, answer);
+		cubealgorithm(D, N, K, p, L, t - 2, c.data(), answer.data());
 
 	// get the indices, to be in the desired format
 	for(i = 0; i < N; ++i)
