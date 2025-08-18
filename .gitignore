@@ -7,3 +7,6 @@
 *.out
 *.pyc
 *.pyo
+
+#builds
+k-regret-cpp-tool/build
