@@ -116,7 +116,7 @@ double calculateMaxRegretRatio(size_t D, size_t N, int K, struct point* p, int* 
     return maxRegret;
 }
 
-std::vector<std::vector<double>> processCSV(const char* filename, int K, size_t& D, size_t& N) {
+std::vector<std::vector<double>> processCSV(const char* filename, size_t& D, size_t& N) {
     std::ifstream file(filename);
     if (!file.is_open()) {
         std::cerr << "Error: Cannot open file " << filename << std::endl;
@@ -168,11 +168,6 @@ std::vector<std::vector<double>> processCSV(const char* filename, int K, size_t&
         std::cerr << "Error: No valid data found in file" << std::endl;
         exit(3);
     }
-    
-    if (K > N) {
-        std::cerr << "Error: Result set size (k=" << K << ") cannot be larger than number of points (n=" << N << ")" << std::endl;
-        exit(3);
-    }
 	
 	return data;
 }
@@ -181,7 +176,7 @@ std::vector<std::vector<double>> processCSV(const char* filename, int K, size_t&
 int main(int argc, char* argv[]) {
     // Default values
     char* filename = nullptr;
-    int K = 20;  // Result set size (default)
+    size_t K = 20;  // Result set size (default)
     
     // Parse command line arguments
     for (int i = 1; i < argc; i++) {
@@ -231,22 +226,19 @@ int main(int argc, char* argv[]) {
     // Process the file
     size_t N;  // Total number of points
     size_t D; // Dimensions    
-	std::vector<std::vector<double>> data = processCSV(filename, K, D, N);
+	std::vector<std::vector<double>> data = processCSV(filename, D, N);
     
+    if (K > N) {
+        std::cerr << "Error: Result set size (k=" << K << ") cannot be larger than number of points (n=" << N << ")" << std::endl;
+        exit(3);
+    }
+
 	std::cout << "\n=== Cube Algorithm Analysis ===" << std::endl;
     std::cout << "Input file: " << filename << std::endl;
     std::cout << "Dimensions: " << D << std::endl;
     std::cout << "Target result set size: " << K << std::endl;
-    
-	// Convert to point array
-    struct point* points = new struct point[N];
-    for (int i = 0; i < N; i++) {
-        points[i].d = D;
-        points[i].a = new double[D];
-        for (int j = 0; j < D; j++) {
-            points[i].a[j] = data[i][j];
-        }
-    }
+
+    point* points = pointArray(data, D, N);
 
     // Allocate memory for result indices
     int* resultIndices = new int[K];

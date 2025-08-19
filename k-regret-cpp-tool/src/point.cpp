@@ -24,57 +24,19 @@
 
 using namespace std;
 
-point* read_points(char* input)
+point* pointArray(std::vector<std::vector<double>> data, size_t D, size_t N) 
 {
-    FILE * c_fp;
-    char filename[MAX_FILENAME_LENG];
-    sprintf(filename, "%s", input);
-    if ((c_fp = fopen(filename, "r")) == NULL)
-    {
-        fprintf(stderr, "Cannot open the data file %s.\n", filename);
-        exit(0);
-    }
-    int number_of_points, dim;
-    fscanf(c_fp, "%i%i", &number_of_points, &dim);
+	// Convert to point array
+	struct point* points = new struct point[N];
+	for (int i = 0; i < N; i++) {
+		points[i].d = D;
+		points[i].a = new double[D];
+		for (int j = 0; j < D; j++) {
+			points[i].a[j] = data[i][j];
+		}
+	}
 
-    point* point_set = new struct point[number_of_points];
-    // read points line by line
-    for (int i = 0; i < number_of_points; i++)
-    {
-        point_set[i].a = new double[dim];
-        point_set[i].d = dim;
-        for (int j = 0; j < dim; j++)
-        {
-            fscanf(c_fp, "%lf", &point_set[i].a[j]);
-        }
-    }
-    return point_set;
-
-}
-
-point* readPoints(char filename[])
-{
-    FILE * c_fp;
-    if ((c_fp = fopen(filename, "r")) == NULL)
-    {
-        fprintf(stderr, "Cannot open the data file %s.\n", filename);
-        exit(0);
-    }
-    int number_of_points, dim;
-    fscanf(c_fp, "%i%i", &number_of_points, &dim);
-
-    point* point_set = new struct point[number_of_points];
-    // read points line by line
-    for (int i = 0; i < number_of_points; i++)
-    {
-        point_set[i].a = new double[dim];
-        point_set[i].d = dim;
-        for (int j = 0; j < dim; j++)
-        {
-            fscanf(c_fp, "%lf", &point_set[i].a[j]);
-        }
-    }
-    return point_set;
+	return points;
 }
 
 double dot(struct point p, double* w)

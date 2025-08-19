@@ -24,8 +24,10 @@
 
 int cubealgorithm(size_t D, size_t N, int K, struct point *p, size_t L, int t, struct point *c, struct point *answer)
 {
-	int i, j, index, inCube, cubeBestIndex, done, seenBefore;
-	
+	size_t i, j, index, inCube, seenBefore;
+	bool done;
+	int cubeBestIndex;
+
 	std::vector<int>boundary(D,0);
 
 	index = 0;
@@ -35,7 +37,7 @@ int cubealgorithm(size_t D, size_t N, int K, struct point *p, size_t L, int t, s
 			answer[index++] = c[i];
 
 	/*** Try all 0 <= j_1, j_2, \ldots < t ***/
-	done = 0;
+	done = false;
 	while(!done && index < K)
 	{
 		// pick the maximal point in current cube
@@ -74,17 +76,16 @@ int cubealgorithm(size_t D, size_t N, int K, struct point *p, size_t L, int t, s
 		else
 			j = 0;
 		boundary[j]++;
-		while(boundary[j] == t && !done)
+		while(!done && boundary[j] == t)
 		{
 			boundary[j] = 0;  // reset position
-
-			if (j == L - 1) j += 2;  // if we reach the skipped dimension, skip it
-			else            j += 1;  // else increment by 1
+			j++;
+			if (j == L) j++;  // if we reach the skipped dimension, skip it
 
 			if (j < D)
 				boundary[j]++; // if not at the end, do the carry
 			else
-				done = 1;      // else indicate that all combinations tried
+				done = true;      // else indicate that all combinations tried
 		}
 	}
 
