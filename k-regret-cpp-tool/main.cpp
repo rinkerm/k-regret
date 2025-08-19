@@ -214,6 +214,12 @@ int main(int argc, char* argv[]) {
         exit(3);
     }
 
+    if (D <= 1)
+    {
+        std::cerr << "Error: Number of Dimensions must be at least 2" << std::endl;
+        exit(3);
+    }
+
 	std::cout << "\n=== Cube Algorithm Analysis ===" << std::endl;
     std::cout << "Input file: " << filename << std::endl;
     std::cout << "Dimensions: " << D << std::endl;
