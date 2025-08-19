@@ -1,5 +1,5 @@
 //==========================================================================================
-//Copyright 2025 Â©, 2025 Matthew Rinker
+//Copyright 2025 ©, 2025 Matthew Rinker
 //
 //This file is a part of the k-regret-cpp project.
 //
@@ -17,13 +17,11 @@
 //along with this program. If not, see <http://www.gnu.org/licenses/>.
 //==========================================================================================
 
-#ifndef KREGRET_INCLUDE_CUBE_H_
-#define KREGRET_INCLUDE_CUBE_H_
+#ifndef KREGRET_INCLUDE_DATAREADER_H_
+#define KREGRET_INCLUDE_DATAREADER_H_
 
-#include "point.h"
-#include <cmath>
+#include <vector>
 
-void cube(size_t D, size_t N, int K, struct point *p, int *maxIndex);
-int cubealgorithm(size_t D, size_t N, int K, struct point *p, int L, int t, struct point *c, struct point *answer);
+std::vector<std::vector<double>> processData(const char*,const char, size_t&, size_t&);
 
-#endif
+#endif;

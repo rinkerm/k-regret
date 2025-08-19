@@ -30,6 +30,7 @@
 
 #include <kregret/cube.h>
 #include <kregret/point.h>
+#include <kregret/data_reader.h>
 
 void printHelp(const char* programName) {
 	std::string programFormatName = std::filesystem::path(programName).filename().string(); 
@@ -37,7 +38,7 @@ void printHelp(const char* programName) {
     std::cout << "    " << programFormatName << " - Run a k-regret algorithm on CSV data to find the representative subset\n\n";
     
     std::cout << "SYNOPSIS\n";
-    std::cout << "    " << programFormatName << " -f FILEPATH [-k SIZE] [-h]\n\n";
+    std::cout << "    " << programFormatName << " -f FILEPATH [-s SEPARATOR] [-k SIZE] [-h]\n\n";
     
     std::cout << "DESCRIPTION\n";
     std::cout << "    This program reads a CSV file containing multi-dimensional data points and uses a\n";
@@ -50,6 +51,10 @@ void printHelp(const char* programName) {
     std::cout << "        Path to the input CSV file (required). The file should contain numeric data.\n";
     std::cout << "        Each row represents a data point and each column a dimension.\n\n";
     
+    std::cout << "    -s SEPARATOR\n";
+    std::cout << "        Separator Character for the file provided\n";
+    std::cout << "        Defaults to ',' if none provided.\n\n";
+
     std::cout << "    -k SIZE\n";
     std::cout << "        Size of the result set to select (optional, default: 20).\n";
     std::cout << "        Must be a positive integer less than or equal to the total number of points.\n\n";
@@ -80,14 +85,14 @@ void printHelp(const char* programName) {
 
 double calculateMaxRegretRatio(size_t D, size_t N, int K, struct point* p, int* resultIndices) {
     double maxRegret = 0.0;
-    
+
     // Check axis-aligned utilities
     for (int d = 0; d < D; d++) {
         double* w = new double[D];
         for (int j = 0; j < D; j++) {
             w[j] = (j == d) ? 1.0 : 0.0;
         }
-        
+
         // Find maximum utility among ALL points
         double maxUtilityOverall = -std::numeric_limits<double>::infinity();
         for (int i = 0; i < N; i++) {
@@ -96,86 +101,32 @@ double calculateMaxRegretRatio(size_t D, size_t N, int K, struct point* p, int* 
                 maxUtilityOverall = utility;
             }
         }
-        
+
         // Find maximum utility in the result set
         double maxUtilityInSet = -std::numeric_limits<double>::infinity();
         for (int j = 0; j < K; j++) {
             double utility = dot(p[resultIndices[j]], w);
             maxUtilityInSet = std::max(maxUtilityInSet, utility);
         }
-        
+
         // Calculate regret for this utility vector
         if (maxUtilityOverall > 0) {
             double regret = (maxUtilityOverall - maxUtilityInSet) / maxUtilityOverall;
             maxRegret = std::max(maxRegret, regret);
         }
-        
+
         delete[] w;
     }
-    
+
     return maxRegret;
 }
 
-std::vector<std::vector<double>> processCSV(const char* filename, size_t& D, size_t& N) {
-    std::ifstream file(filename);
-    if (!file.is_open()) {
-        std::cerr << "Error: Cannot open file " << filename << std::endl;
-        exit(2);
-    }
-    
-    std::vector<std::vector<double>> data;
-    std::string line;
-    int lineNumber = 0;
-    D = 0;
-	
-    // Read CSV file
-    while (std::getline(file, line)) {
-
-        lineNumber++;
-        std::vector<double> row;
-        std::stringstream ss(line);
-        std::string value;
-        
-        while (std::getline(ss, value, ',')) {
-            // Remove any whitespace
-            value.erase(0, value.find_first_not_of(" \t\r\n"));
-            value.erase(value.find_last_not_of(" \t\r\n") + 1);
-            
-            if (!value.empty()) {
-                try {
-                    row.push_back(std::stod(value));
-                } catch (const std::exception& e) {
-                    std::cerr << "Warning: Error parsing value '" << value 
-                             << "' at line " << lineNumber 
-							 << " (" << e.what() << ")" << std::endl;
-                    continue;
-                }
-            }
-        }
-        if(lineNumber==1) {D = row.size();}
-        if (row.size() == D) {
-            data.push_back(row);
-        } else if (!row.empty()) {
-            std::cerr << "Warning: Line " << lineNumber << " has " << row.size() 
-                     << " values, expected " << D << ". Skipping." << std::endl;
-        }
-    }
-    file.close();
-    
-    N = data.size();
-    
-    if (N == 0) {
-        std::cerr << "Error: No valid data found in file" << std::endl;
-        exit(3);
-    }
-	
-	return data;
-}
 
 // Updated main function with command line parsing
 int main(int argc, char* argv[]) {
     // Default values
     char* filename = nullptr;
+    char sep = ',';
     size_t K = 20;  // Result set size (default)
     
     // Parse command line arguments
@@ -189,6 +140,36 @@ int main(int argc, char* argv[]) {
                 filename = argv[++i];
             } else {
                 std::cerr << "Error: -f requires a filename argument\n";
+                return 1;
+            }
+        }
+        else if (strcmp(argv[i], "-s") == 0) {
+            if (i + 1 < argc) {
+                std::string arg = argv[++i];
+                try {
+                    if (arg.size() == 1)
+                    {
+                        sep = argv[++i][0];
+                    }
+                    else if (arg == "\\t") {
+                        sep = '\t';
+                    }
+                    else if (arg == "\\s") {
+                        sep = ' ';
+                    }
+                    else 
+                    {
+                        std::cerr << "Error: Seperator must be a single character or escape sequence (\\t \\s)\n";
+                        return 1;
+                    }
+                }
+                catch (const std::exception& e) {
+                    std::cerr << "Error: Invalid seperator value (" << e.what() << ")\n";
+                    return 1;
+                }
+            }
+            else {
+                std::cerr << "Error: -s requires a character argument\n";
                 return 1;
             }
         }
@@ -226,7 +207,7 @@ int main(int argc, char* argv[]) {
     // Process the file
     size_t N;  // Total number of points
     size_t D; // Dimensions    
-	std::vector<std::vector<double>> data = processCSV(filename, D, N);
+	std::vector<std::vector<double>> data = processData(filename, sep, D, N);
     
     if (K > N) {
         std::cerr << "Error: Result set size (k=" << K << ") cannot be larger than number of points (n=" << N << ")" << std::endl;

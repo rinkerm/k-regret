@@ -18,8 +18,8 @@
 //==========================================================================================
 
 
-#ifndef REGRETOPERATOR_SRC_POINT_H_
-#define REGRETOPERATOR_SRC_POINT_H_
+#ifndef KREGRET_INCLUDE_POINT_H_
+#define KREGRET_INCLUDE_POINT_H_
 
 #include <vector>
 
