@@ -77,7 +77,7 @@ struct point maxPoint(int N, struct point *p, double *v)
 
 
 // Prints the components of a point
-double print(point p)
+std::string to_string(point p)
 {
 	for(int i = 0; i < p.d; ++i)
 		printf("%lf ",p.a[i]);

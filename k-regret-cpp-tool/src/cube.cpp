@@ -20,6 +20,7 @@
 // Algorithm using the cube "strips" method
 #include <vector>
 #include <cmath>
+
 #include <kregret/cube.h>
 
 int cubealgorithm(size_t D, size_t N, int K, struct point *p, size_t L, int t, struct point *c, struct point *answer)
