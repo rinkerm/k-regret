@@ -21,6 +21,7 @@
 
 #include <iostream>
 #include <stdio.h>
+#include <string>
 
 using namespace std;
 
@@ -79,10 +80,12 @@ struct point maxPoint(int N, struct point *p, double *v)
 // Prints the components of a point
 std::string to_string(point p)
 {
-	for(int i = 0; i < p.d; ++i)
-		printf("%lf ",p.a[i]);
-	printf("\n");
-  return 0;
+	std::string s = "";
+	for (int i = 0; i < p.d; ++i)
+		s += std::to_string(p.a[i]);
+		s += " ";
+	s+="\n";
+  return s;
 }
 
 

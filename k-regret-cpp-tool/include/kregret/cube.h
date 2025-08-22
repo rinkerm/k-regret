@@ -24,6 +24,6 @@
 #include <kregret/point.h>
 
 void cube(size_t D, size_t N, int K, struct point *p, int *maxIndex);
-int cubealgorithm(size_t D, size_t N, int K, struct point *p, int L, int t, struct point *c, struct point *answer);
+int cubealgorithm(size_t D, size_t N, int K, struct point *p, size_t L, int t, struct point *c, struct point *answer);
 
 #endif

@@ -17,3 +17,21 @@
 //along with this program. If not, see <http://www.gnu.org/licenses/>.
 //==========================================================================================
 
+#ifndef KREGRET_INCLUDE_KREGRET_RESULT_H
+#define KREGRET_INCLUDE_KREGRET_RESULT_H
+
+#include <vector>
+#include <kregret/point.h>
+struct kregret_result
+{
+	std::vector<point> result_points;
+	double max_regret;
+
+	kregret_result() : result_points(0), max_regret(0) {}
+
+	void addPoint(point p);
+	void calculateMaxRegretRatio(size_t N, struct point* p);
+
+};
+
+#endif
